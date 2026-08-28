@@ -4,7 +4,7 @@ import Image from "next/image";
 import { ChangeEvent, useEffect, useState } from "react";
 
 import PlantResult from "@/components/PlantResult";
-import { mockPlants } from "@/data/mockplant";
+import { mockPlants } from "@/data/mockPlants";
 
 export default function ImageUploader() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
