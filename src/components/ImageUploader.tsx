@@ -1,23 +1,17 @@
 "use client";
 
 import Image from "next/image";
-import {
-  ChangeEvent,
-  useEffect,
-  useState,
-} from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 
 import PlantResult from "@/components/PlantResult";
-import { mockPlant } from "@/data/mockPlant";
+import { mockPlants } from "@/data/mockplant";
 
 export default function ImageUploader() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
 
-  const handleImageChange = (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
 
     if (!file) {
@@ -52,11 +46,7 @@ export default function ImageUploader() {
 
   return (
     <div>
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleImageChange}
-      />
+      <input type="file" accept="image/*" onChange={handleImageChange} />
 
       {preview && (
         <div>
@@ -68,23 +58,17 @@ export default function ImageUploader() {
             unoptimized
           />
 
-          <button
-            type="button"
-            onClick={handleRemoveImage}
-          >
+          <button type="button" onClick={handleRemoveImage}>
             Remove image
           </button>
 
-          <button
-            type="button"
-            onClick={handleIdentify}
-          >
+          <button type="button" onClick={handleIdentify}>
             Identify Plant
           </button>
         </div>
       )}
-      
-        {showResult && <PlantResult plant={mockPlant} />}
+
+      {showResult && <PlantResult plant={mockPlants[0]} />}
     </div>
   );
 }
