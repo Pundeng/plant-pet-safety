@@ -6,8 +6,8 @@ export interface Source {
 }
 
 export interface PlanySymptom {
-    cats?: string;
-    dogs?: string;
+    cats?: string[];
+    dogs?: string[];
 }
 
 export interface Plant {
@@ -18,7 +18,7 @@ export interface Plant {
     catSafety: SafetyStatus;
     dogSafety: SafetyStatus;
 
-    toxicPrinciple?: string[];
+    toxicPrinciples?: string[];
     toxicParts?: string[];
 
     symptoms?: PlanySymptom;
