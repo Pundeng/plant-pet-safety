@@ -1,27 +1,27 @@
-export type SafetyStatus = 'safe' | 'toxic' | 'unknown';
+export type SafetyStatus = "safe" | "toxic" | "unknown";
 
 export interface Source {
-    name: string;
-    url: string;
+  name: string;
+  url: string;
 }
 
-export interface PlanySymptom {
-    cats?: string[];
-    dogs?: string[];
+export interface PlantSymptom {
+  cats?: string[];
+  dogs?: string[];
 }
 
 export interface Plant {
-    commonName: string;
-    scientificName: string;
-    imageUrl: string;
+  commonName: string;
+  scientificName: string;
+  imageUrl: string;
 
-    catSafety: SafetyStatus;
-    dogSafety: SafetyStatus;
+  catSafety: SafetyStatus;
+  dogSafety: SafetyStatus;
 
-    toxicPrinciples?: string[];
-    toxicParts?: string[];
+  toxicPrinciples?: string[];
+  toxicParts?: string[];
 
-    symptoms?: PlanySymptom;
+  symptoms?: PlantSymptom;
 
-    sources?: Source[];
+  sources?: Source[];
 }

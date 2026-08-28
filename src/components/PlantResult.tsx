@@ -66,11 +66,7 @@ export default function PlantResult({ plant }: PlantResultProps) {
       <ul>
         {plant.sources?.map((source) => (
           <li key={source.url}>
-            <a
-              href={source.url}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a href={source.url} target="_blank" rel="noopener noreferrer">
               {source.name}
             </a>
           </li>
