@@ -72,8 +72,7 @@ export async function POST(request: Request) {
       data.bestMatch ??
       null;
 
-    const commonName =
-      bestResult.species?.commonNames?.[0] ?? null;
+    const commonName = bestResult.species?.commonNames?.[0] ?? null;
 
     const confidence = bestResult.score ?? 0;
 

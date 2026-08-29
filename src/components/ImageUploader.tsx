@@ -32,32 +32,32 @@ export default function ImageUploader() {
   };
 
   const handleIdentify = async () => {
-  if (!selectedFile) {
-    return;
-  }
-
-  const formData = new FormData();
-
-  formData.append("image", selectedFile);
-
-  try {
-    const response = await fetch("/api/identify", {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      console.error(data.error);
+    if (!selectedFile) {
       return;
     }
 
-    setIdentification(data);
-  } catch (error) {
-    console.error("Failed to identify plant:", error);
-  }
-};
+    const formData = new FormData();
+
+    formData.append("image", selectedFile);
+
+    try {
+      const response = await fetch("/api/identify", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error(data.error);
+        return;
+      }
+
+      setIdentification(data);
+    } catch (error) {
+      console.error("Failed to identify plant:", error);
+    }
+  };
 
   useEffect(() => {
     return () => {
@@ -97,23 +97,17 @@ export default function ImageUploader() {
 
           {identification.identified ? (
             <>
-              <p>
-                Common name: {identification.commonName ?? "Unknown"}
-              </p>
+              <p>Common name: {identification.commonName ?? "Unknown"}</p>
+
+              <p>Scientific name: {identification.scientificName}</p>
 
               <p>
-                Scientific name: {identification.scientificName}
-              </p>
-
-              <p>
-                Confidence:{" "}
-                {Math.round((identification.confidence ?? 0) * 100)}%
+                Confidence: {Math.round((identification.confidence ?? 0) * 100)}
+                %
               </p>
 
               {identification.lowConfidence && (
-                <p>
-                  Low confidence result. Try uploading a clearer image.
-                </p>
+                <p>Low confidence result. Try uploading a clearer image.</p>
               )}
             </>
           ) : (
@@ -123,4 +117,4 @@ export default function ImageUploader() {
       )}
     </div>
   );
-} 
+}
