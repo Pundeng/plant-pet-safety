@@ -10,7 +10,7 @@ export default function ImageUploader() {
     identified: boolean;
     scientificName?: string | null;
     commonName?: string | null;
-    confidence?: number;
+    confidence?: number | null;
     lowConfidence?: boolean;
   } | null>(null);
 
@@ -99,15 +99,23 @@ export default function ImageUploader() {
             <>
               <p>Common name: {identification.commonName ?? "Unknown"}</p>
 
-              <p>Scientific name: {identification.scientificName}</p>
+              <p>
+                Scientific name: {identification.scientificName ?? "Unknown"}
+              </p>
 
               <p>
-                Confidence: {Math.round((identification.confidence ?? 0) * 100)}
-                %
+                Identification confidence:{" "}
+                {identification.confidence !== null &&
+                identification.confidence !== undefined
+                  ? `${Math.round(identification.confidence * 100)}%`
+                  : "Unavailable"}
               </p>
 
               {identification.lowConfidence && (
-                <p>Low confidence result. Try uploading a clearer image.</p>
+                <p>
+                  ⚠️ This plant identification is uncertain. Pet-safety
+                  information may not apply to the plant in your photo.
+                </p>
               )}
             </>
           ) : (

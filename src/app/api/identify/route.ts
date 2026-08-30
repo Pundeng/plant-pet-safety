@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isLowConfidence, normalizeConfidence } from "@/lib/confidence";
 
 export async function POST(request: Request) {
   try {
@@ -74,9 +75,9 @@ export async function POST(request: Request) {
 
     const commonName = bestResult.species?.commonNames?.[0] ?? null;
 
-    const confidence = bestResult.score ?? 0;
+    const confidence = normalizeConfidence(bestResult.score);
 
-    const lowConfidence = confidence < 0.3;
+    const lowConfidence = isLowConfidence(confidence);
 
     return NextResponse.json({
       identified: true,
