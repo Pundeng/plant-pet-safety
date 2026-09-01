@@ -2,9 +2,13 @@ import { Plant } from "@/types/plant";
 
 interface PlantResultProps {
   plant: Plant;
+  lowConfidence?: boolean;
 }
 
-export default function PlantResult({ plant }: PlantResultProps) {
+export default function PlantResult({
+  plant,
+  lowConfidence = false,
+}: PlantResultProps) {
   return (
     <section>
       <h2>Plant Result</h2>
@@ -21,14 +25,29 @@ export default function PlantResult({ plant }: PlantResultProps) {
         </p>
       </div>
 
+      {lowConfidence && (
+        <p>
+          Safety information is based on an uncertain plant identification.
+          Confirm the plant before relying on this result.
+        </p>
+      )}
+
       <div>
         <h3>Cat Safety</h3>
-        <p>{plant.catSafety}</p>
+        <p>
+          {lowConfidence
+            ? `Possible result: ${plant.catSafety}`
+            : plant.catSafety}
+        </p>
       </div>
 
       <div>
         <h3>Dog Safety</h3>
-        <p>{plant.dogSafety}</p>
+        <p>
+          {lowConfidence
+            ? `Possible result: ${plant.dogSafety}`
+            : plant.dogSafety}
+        </p>
       </div>
 
       {plant.symptoms && (

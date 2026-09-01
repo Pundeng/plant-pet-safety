@@ -1,3 +1,5 @@
+import { LOW_CONFIDENCE_THRESHOLD } from "./constants";
+
 export interface PlantIdentificationResult {
   identified: boolean;
   scientificName: string | null;
@@ -5,8 +7,6 @@ export interface PlantIdentificationResult {
   confidence: number;
   lowConfidence: boolean;
 }
-
-const LOW_CONFIDENCE_THRESHOLD = 0.3;
 
 export async function identifyPlant(
   image: File,
