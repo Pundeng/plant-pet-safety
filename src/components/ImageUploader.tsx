@@ -5,6 +5,68 @@ import { ChangeEvent, useEffect, useState } from "react";
 import PlantResult from "@/components/PlantResult";
 import { Plant } from "@/types/plant";
 
+const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png"];
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+
+interface IdentificationResult {
+  identified: boolean;
+  scientificName?: string | null;
+  commonName?: string | null;
+  confidence?: number;
+  lowConfidence?: boolean;
+}
+
+interface ToxicityResult {
+  catSafety?: Plant["catSafety"];
+  dogSafety?: Plant["dogSafety"];
+  toxicPrinciples?: string[];
+  toxicParts?: string[];
+  symptoms?: Plant["symptoms"];
+  source?: string;
+}
+
+interface AnalyzeResponse {
+  identification: IdentificationResult;
+  toxicity: ToxicityResult | null;
+}
+
+function normalizePlant(data: AnalyzeResponse, imageUrl: string): Plant {
+  return {
+    commonName: data.identification.commonName ?? "Unknown",
+    scientificName: data.identification.scientificName ?? "Unknown",
+
+    imageUrl,
+
+    catSafety: data.toxicity?.catSafety ?? "unknown",
+    dogSafety: data.toxicity?.dogSafety ?? "unknown",
+
+    toxicPrinciples: data.toxicity?.toxicPrinciples,
+    toxicParts: data.toxicity?.toxicParts,
+    symptoms: data.toxicity?.symptoms,
+
+    sources: data.toxicity?.source
+      ? [
+          {
+            name: data.toxicity.source,
+            url: "https://plantsm.art/",
+          },
+        ]
+      : [],
+  };
+}
+
+function validateImage(file: File): string | null {
+  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+    return "Please upload a JPEG or PNG image.";
+  }
+
+  if (file.size > MAX_FILE_SIZE) {
+    return "This image is too large. Please upload an image under 5 MB.";
+  }
+
+  return null;
+}
+
 export default function ImageUploader() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -13,18 +75,26 @@ export default function ImageUploader() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [identification, setIdentification] = useState<{
-    identified: boolean;
-    scientificName?: string | null;
-    commonName?: string | null;
-    confidence?: number;
-    lowConfidence?: boolean;
-  } | null>(null);
+  const [identification, setIdentification] =
+    useState<IdentificationResult | null>(null);
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
 
     if (!file) {
+      return;
+    }
+
+    setError(null);
+    setPlant(null);
+    setIdentification(null);
+
+    const validationError = validateImage(file);
+
+    if (validationError) {
+      setSelectedFile(null);
+      setPreview(null);
+      setError(validationError);
       return;
     }
 
@@ -36,6 +106,7 @@ export default function ImageUploader() {
     setSelectedFile(null);
     setPreview(null);
     setPlant(null);
+    setIdentification(null);
     setError(null);
   };
 
@@ -63,7 +134,7 @@ export default function ImageUploader() {
         throw new Error("Failed to analyze plant");
       }
 
-      const data = await response.json();
+      const data: AnalyzeResponse = await response.json();
 
       if (!data.identification?.identified) {
         setError("No plant could be identified.");
@@ -74,27 +145,7 @@ export default function ImageUploader() {
 
       setIdentification(data.identification);
 
-      const normalizedPlant: Plant = {
-        commonName: data.identification.commonName ?? "Unknown",
-        scientificName: data.identification.scientificName ?? "Unknown",
-
-        imageUrl,
-
-        catSafety: data.toxicity?.catSafety ?? "unknown",
-        dogSafety: data.toxicity?.dogSafety ?? "unknown",
-
-        toxicPrinciples: data.toxicity?.toxicPrinciples,
-        toxicParts: data.toxicity?.toxicParts,
-        symptoms: data.toxicity?.symptoms,
-        sources: data.toxicity
-          ? [
-              {
-                name: data.toxicity.source,
-                url: "https://plantsm.art/",
-              },
-            ]
-          : [],
-      };
+      const normalizedPlant = normalizePlant(data, imageUrl);
 
       setPlant(normalizedPlant);
     } catch (error) {
@@ -116,7 +167,11 @@ export default function ImageUploader() {
 
   return (
     <div>
-      <input type="file" accept="image/*" onChange={handleImageChange} />
+      <input
+        type="file"
+        accept="image/jpeg,image/png"
+        onChange={handleImageChange}
+      />
 
       {preview && (
         <div>
@@ -132,7 +187,11 @@ export default function ImageUploader() {
             Remove image
           </button>
 
-          <button type="button" onClick={handleIdentify} disabled={isLoading}>
+          <button
+            type="button"
+            onClick={handleIdentify}
+            disabled={isLoading || !selectedFile}
+          >
             {isLoading ? "Identifying..." : "Identify Plant"}
           </button>
         </div>
@@ -147,16 +206,30 @@ export default function ImageUploader() {
           <h2>Identification Info</h2>
 
           <p>
-            Confidence: {Math.round((identification.confidence ?? 0) * 100)}%
+            Confidence:{" "}
+            {identification.confidence !== undefined
+              ? `${Math.round(identification.confidence * 100)}%`
+              : "Unavailable"}
           </p>
 
           {identification.lowConfidence && (
-            <p>Low confidence result. Try uploading a clearer image.</p>
+            <div>
+              <strong>Uncertain identification</strong>
+              <p>
+                This plant identification may be incorrect. Pet-safety
+                information may not apply to the plant in your photo.
+              </p>
+            </div>
           )}
         </div>
       )}
 
-      {plant && <PlantResult plant={plant} />}
+      {plant && (
+        <PlantResult
+          plant={plant}
+          lowConfidence={identification?.lowConfidence ?? false}
+        />
+      )}
     </div>
   );
 }
