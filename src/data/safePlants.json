@@ -1,0 +1,92 @@
+{
+  "metadata": {
+    "sourceName": "Plant Smart",
+    "sourceUrl": "https://plantsm.art/safe/",
+    "originalSourceName": "ASPCA",
+    "originalSourceUrl": "https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants",
+    "scope": "Plants listed as non-toxic to cats and dogs",
+    "retrievedAt": "2026-09-02"
+  },
+  "plants": [
+    {
+      "commonName": "Boston Fern",
+      "scientificName": "Nephrolepis exaltata"
+    },
+    {
+      "commonName": "Ponytail Palm",
+      "scientificName": "Beaucarnea recurvata"
+    },
+    {
+      "commonName": "Calathea",
+      "scientificName": "Calathea orbifolia"
+    },
+    {
+      "commonName": "Prayer Plant",
+      "scientificName": "Maranta leuconeura"
+    },
+    {
+      "commonName": "African Violet",
+      "scientificName": "Saintpaulia ionantha"
+    },
+    {
+      "commonName": "Zebra Haworthia",
+      "scientificName": "Haworthiopsis attenuata"
+    },
+    {
+      "commonName": "Echeveria",
+      "scientificName": "Echeveria elegans"
+    },
+    {
+      "commonName": "Christmas Cactus",
+      "scientificName": "Schlumbergera bridgesii"
+    },
+    {
+      "commonName": "Moth Orchid",
+      "scientificName": "Phalaenopsis spp."
+    },
+    {
+      "commonName": "Baby Rubber Plant",
+      "scientificName": "Peperomia obtusifolia"
+    },
+    {
+      "commonName": "Watermelon Peperomia",
+      "scientificName": "Peperomia argyreia"
+    },
+    {
+      "commonName": "Polka Dot Plant",
+      "scientificName": "Hypoestes phyllostachya"
+    },
+    {
+      "commonName": "Chinese Money Plant",
+      "scientificName": "Pilea peperomioides"
+    },
+    {
+      "commonName": "Cast Iron Plant",
+      "scientificName": "Aspidistra elatior"
+    },
+    {
+      "commonName": "Money Tree",
+      "scientificName": "Pachira aquatica"
+    },
+    {
+      "commonName": "Staghorn Fern",
+      "scientificName": "Platycerium bifurcatum"
+    },
+    {
+      "commonName": "Nerve Plant",
+      "scientificName": "Fittonia albivenis"
+    },
+    {
+      "commonName": "Bromeliad",
+      "scientificName": "Guzmania lingulata"
+    },
+    {
+      "commonName": "Basil",
+      "scientificName": "Ocimum basilicum"
+    },
+    {
+      "commonName": "Thyme",
+      "scientificName": "Thymus vulgaris"
+    }
+  ]
+}
