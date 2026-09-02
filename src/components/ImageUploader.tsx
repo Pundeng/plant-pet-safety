@@ -8,46 +8,55 @@ import { Plant } from "@/types/plant";
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png"];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 
-interface IdentificationResult {
-  identified: boolean;
-  scientificName?: string | null;
-  commonName?: string | null;
-  confidence?: number;
-  lowConfidence?: boolean;
-}
-
-interface ToxicityResult {
-  catSafety?: Plant["catSafety"];
-  dogSafety?: Plant["dogSafety"];
-  toxicPrinciples?: string[];
-  toxicParts?: string[];
+interface CandidateToxicity {
+  catSafety: Plant["catSafety"];
+  dogSafety: Plant["dogSafety"];
   symptoms?: Plant["symptoms"];
   source?: string;
 }
 
-interface AnalyzeResponse {
-  identification: IdentificationResult;
-  toxicity: ToxicityResult | null;
+interface ReferenceImage {
+  url: string;
+  author: string | null;
+  license: string | null;
+  citation: string | null;
 }
 
-function normalizePlant(data: AnalyzeResponse, imageUrl: string): Plant {
+interface IdentificationCandidate {
+  scientificName: string | null;
+  commonName: string | null;
+  confidence: number;
+  lowConfidence: boolean;
+  referenceImage: ReferenceImage | null;
+  toxicity: CandidateToxicity;
+}
+
+interface IdentificationResult {
+  identified: boolean;
+  topResult: IdentificationCandidate | null;
+  alternatives: IdentificationCandidate[];
+}
+
+interface AnalyzeResponse {
+  identification: IdentificationResult;
+  hasSafetyConflict: boolean;
+}
+
+function normalizePlant(
+  candidate: IdentificationCandidate,
+  imageUrl: string,
+): Plant {
   return {
-    commonName: data.identification.commonName ?? "Unknown",
-    scientificName: data.identification.scientificName ?? "Unknown",
-
+    commonName: candidate.commonName ?? "Unknown",
+    scientificName: candidate.scientificName ?? "Unknown",
     imageUrl,
-
-    catSafety: data.toxicity?.catSafety ?? "unknown",
-    dogSafety: data.toxicity?.dogSafety ?? "unknown",
-
-    toxicPrinciples: data.toxicity?.toxicPrinciples,
-    toxicParts: data.toxicity?.toxicParts,
-    symptoms: data.toxicity?.symptoms,
-
-    sources: data.toxicity?.source
+    catSafety: candidate.toxicity.catSafety,
+    dogSafety: candidate.toxicity.dogSafety,
+    symptoms: candidate.toxicity.symptoms,
+    sources: candidate.toxicity.source
       ? [
           {
-            name: data.toxicity.source,
+            name: candidate.toxicity.source,
             url: "https://plantsm.art/",
           },
         ]
@@ -70,10 +79,10 @@ function validateImage(file: File): string | null {
 export default function ImageUploader() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-
   const [plant, setPlant] = useState<Plant | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasSafetyConflict, setHasSafetyConflict] = useState(false);
 
   const [identification, setIdentification] =
     useState<IdentificationResult | null>(null);
@@ -88,6 +97,7 @@ export default function ImageUploader() {
     setError(null);
     setPlant(null);
     setIdentification(null);
+    setHasSafetyConflict(false);
 
     const validationError = validateImage(file);
 
@@ -107,6 +117,7 @@ export default function ImageUploader() {
     setPreview(null);
     setPlant(null);
     setIdentification(null);
+    setHasSafetyConflict(false);
     setError(null);
   };
 
@@ -120,6 +131,8 @@ export default function ImageUploader() {
     setIsLoading(true);
     setError(null);
     setPlant(null);
+    setIdentification(null);
+    setHasSafetyConflict(false);
 
     try {
       const formData = new FormData();
@@ -136,7 +149,7 @@ export default function ImageUploader() {
 
       const data: AnalyzeResponse = await response.json();
 
-      if (!data.identification?.identified) {
+      if (!data.identification?.identified || !data.identification.topResult) {
         setError("No plant could be identified.");
         return;
       }
@@ -144,8 +157,12 @@ export default function ImageUploader() {
       console.log("Identification result:", data.identification);
 
       setIdentification(data.identification);
+      setHasSafetyConflict(data.hasSafetyConflict ?? false);
 
-      const normalizedPlant = normalizePlant(data, imageUrl);
+      const normalizedPlant = normalizePlant(
+        data.identification.topResult,
+        imageUrl,
+      );
 
       setPlant(normalizedPlant);
     } catch (error) {
@@ -201,18 +218,38 @@ export default function ImageUploader() {
 
       {error && <p>{error}</p>}
 
-      {identification?.identified && (
+      {identification?.identified && identification.topResult && (
         <div>
           <h2>Identification Info</h2>
 
           <p>
-            Confidence:{" "}
-            {identification.confidence !== undefined
-              ? `${Math.round(identification.confidence * 100)}%`
-              : "Unavailable"}
+            Confidence: {Math.round(identification.topResult.confidence * 100)}%
           </p>
 
-          {identification.lowConfidence && (
+          {identification.topResult.referenceImage && (
+            <div>
+              <Image
+                src={identification.topResult.referenceImage.url}
+                alt={`Reference image for ${
+                  identification.topResult.commonName ??
+                  identification.topResult.scientificName ??
+                  "plant"
+                }`}
+                width={250}
+                height={250}
+              />
+
+              <small>
+                {identification.topResult.referenceImage.citation ??
+                  `${
+                    identification.topResult.referenceImage.author ??
+                    "Unknown contributor"
+                  } / Pl@ntNet`}
+              </small>
+            </div>
+          )}
+
+          {identification.topResult.lowConfidence && (
             <div>
               <strong>Uncertain identification</strong>
               <p>
@@ -227,9 +264,75 @@ export default function ImageUploader() {
       {plant && (
         <PlantResult
           plant={plant}
-          lowConfidence={identification?.lowConfidence ?? false}
+          lowConfidence={identification?.topResult?.lowConfidence ?? false}
         />
       )}
+
+      {hasSafetyConflict && (
+        <div>
+          <strong>Different safety results found</strong>
+
+          <p>
+            Similar matches have different pet-safety information. Confirm the
+            plant identification before relying on the toxicity result.
+          </p>
+        </div>
+      )}
+
+      {identification?.alternatives &&
+        identification.alternatives.length > 0 && (
+          <div>
+            <p>
+              <strong>Not sure this is your plant?</strong>
+            </p>
+            <details>
+              <summary>View similar matches</summary>
+
+              {identification.alternatives.map((candidate, index) => (
+                <div key={`${candidate.scientificName}-${index}`}>
+                  <h3>
+                    {candidate.commonName ??
+                      candidate.scientificName ??
+                      "Unknown plant"}
+                  </h3>
+
+                  {candidate.commonName && (
+                    <p>
+                      <em>{candidate.scientificName ?? "Unknown"}</em>
+                    </p>
+                  )}
+
+                  <p>Confidence: {Math.round(candidate.confidence * 100)}%</p>
+
+                  {candidate.referenceImage && (
+                    <div>
+                      <Image
+                        src={candidate.referenceImage.url}
+                        alt={`Reference image for ${
+                          candidate.commonName ??
+                          candidate.scientificName ??
+                          "plant"
+                        }`}
+                        width={200}
+                        height={200}
+                      />
+                      <small>
+                        {candidate.referenceImage.citation ??
+                          `${
+                            candidate.referenceImage.author ??
+                            "Unknown contributor"
+                          } / Pl@ntNet`}
+                      </small>
+                    </div>
+                  )}
+
+                  <p>Cat Safety: {candidate.toxicity.catSafety}</p>
+                  <p>Dog Safety: {candidate.toxicity.dogSafety}</p>
+                </div>
+              ))}
+            </details>
+          </div>
+        )}
     </div>
   );
 }
