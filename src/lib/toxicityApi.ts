@@ -1,3 +1,5 @@
+import { findLocalSafePlant } from "@/lib/safePlants";
+
 interface PlantSmartSymptom {
   name: string;
   slug: string;
@@ -35,7 +37,7 @@ export async function findPlantToxicity(scientificName: string) {
   );
 
   if (!plant) {
-    return null;
+    return findLocalSafePlant(scientificName);
   }
 
   const catIsToxic = plant.animals.includes("cats");
@@ -44,15 +46,18 @@ export async function findPlantToxicity(scientificName: string) {
   const symptoms = plant.symptoms.map((symptom) => symptom.name);
 
   return {
-    catSafety: catIsToxic ? "toxic" : "unknown",
-    dogSafety: dogIsToxic ? "toxic" : "unknown",
+    catSafety: catIsToxic ? ("toxic" as const) : ("unknown" as const),
+    dogSafety: dogIsToxic ? ("toxic" as const) : ("unknown" as const),
 
     symptoms: {
       cats: catIsToxic ? symptoms : [],
       dogs: dogIsToxic ? symptoms : [],
     },
 
-    source: "Plant Smart",
+    source: {
+      name: "Plant Smart",
+      url: "https://plantsm.art/",
+    },
   };
 }
 
