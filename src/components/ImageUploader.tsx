@@ -12,7 +12,10 @@ interface CandidateToxicity {
   catSafety: Plant["catSafety"];
   dogSafety: Plant["dogSafety"];
   symptoms?: Plant["symptoms"];
-  source?: string;
+  source?: {
+    name: string;
+    url: string;
+  };
 }
 
 interface ReferenceImage {
@@ -53,14 +56,7 @@ function normalizePlant(
     catSafety: candidate.toxicity.catSafety,
     dogSafety: candidate.toxicity.dogSafety,
     symptoms: candidate.toxicity.symptoms,
-    sources: candidate.toxicity.source
-      ? [
-          {
-            name: candidate.toxicity.source,
-            url: "https://plantsm.art/",
-          },
-        ]
-      : [],
+    sources: candidate.toxicity.source ? [candidate.toxicity.source] : [],
   };
 }
 
