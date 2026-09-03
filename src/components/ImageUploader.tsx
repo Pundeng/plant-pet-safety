@@ -4,9 +4,7 @@ import Image from "next/image";
 import { ChangeEvent, useEffect, useState } from "react";
 import PlantResult from "@/components/PlantResult";
 import { Plant } from "@/types/plant";
-
-const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png"];
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+import { validateImage } from "@/lib/imageValidation";
 
 interface CandidateToxicity {
   catSafety: Plant["catSafety"];
@@ -58,18 +56,6 @@ function normalizePlant(
     symptoms: candidate.toxicity.symptoms,
     sources: candidate.toxicity.source ? [candidate.toxicity.source] : [],
   };
-}
-
-function validateImage(file: File): string | null {
-  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-    return "Please upload a JPEG or PNG image.";
-  }
-
-  if (file.size > MAX_FILE_SIZE) {
-    return "This image is too large. Please upload an image under 5 MB.";
-  }
-
-  return null;
 }
 
 export default function ImageUploader() {
