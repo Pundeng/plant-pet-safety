@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { identifyPlant } from "@/lib/plantIdentification";
-import { findPlantToxicity } from "@/lib/toxicityApi";
+import { identifyPlant } from "../../../lib/plantIdentification";
+import { findPlantToxicity } from "../../../lib/toxicityApi";
 
 export async function POST(request: Request) {
   try {
