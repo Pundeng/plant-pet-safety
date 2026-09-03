@@ -1,4 +1,5 @@
 import { Plant } from "@/types/plant";
+import SavePlantButton from "@/components/SavePlantButton";
 
 interface PlantResultProps {
   plant: Plant;
@@ -95,6 +96,8 @@ export default function PlantResult({
           <p>No source available.</p>
         )}
       </div>
+
+      <SavePlantButton plant={plant} />
     </section>
   );
 }
