@@ -1,4 +1,4 @@
-import { findLocalSafePlant } from "@/lib/safePlants";
+import { findLocalSafePlant } from "./safePlants";
 
 interface PlantSmartSymptom {
   name: string;
