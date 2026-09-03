@@ -14,8 +14,11 @@
     "src/lib/constants.ts",
     "src/lib/imageValidation.ts",
     "src/lib/plantIdentification.ts",
+    "src/lib/plantNormalization.ts",
     "src/lib/safePlants.ts",
     "src/lib/toxicityApi.ts",
+    "src/types/plant.ts",
+    "src/app/api/analyze/route.ts",
     "src/data/safePlants.json",
     "tests/**/*.ts"
   ]
