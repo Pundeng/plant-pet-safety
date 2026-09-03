@@ -1,4 +1,4 @@
-import safePlantsData from "@/data/safePlants.json";
+import safePlantsData from "../data/safePlants.json";
 
 interface LocalSafePlant {
   commonName: string;
