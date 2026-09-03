@@ -142,8 +142,5 @@ test("fails clearly when the API key is missing", async () => {
 test("converts a failed PlantNet response into a controlled error", async () => {
   mockPlantNetResponse({ error: "upstream failure" }, 503);
 
-  await assert.rejects(
-    identifyPlant(createImage()),
-    /PLANTNET_API_FAILED/,
-  );
+  await assert.rejects(identifyPlant(createImage()), /PLANTNET_API_FAILED/);
 });

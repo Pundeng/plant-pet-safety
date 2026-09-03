@@ -64,9 +64,7 @@ test("passes identified scientific names into toxicity lookup", async () => {
             name: "Monstera deliciosa",
             animals: ["cats", "dogs"],
             common: [],
-            symptoms: [
-              { name: "Drooling", slug: "drooling" },
-            ],
+            symptoms: [{ name: "Drooling", slug: "drooling" }],
             family: "Araceae",
           },
         ]),
@@ -89,9 +87,7 @@ test("passes identified scientific names into toxicity lookup", async () => {
   assert.equal(body.identification.topResult.toxicity.catSafety, "toxic");
   assert.equal(body.identification.topResult.toxicity.dogSafety, "toxic");
   assert.equal(
-    requestedUrls.some((url) =>
-      url.includes("plantsm.art/api/plants.json"),
-    ),
+    requestedUrls.some((url) => url.includes("plantsm.art/api/plants.json")),
     true,
   );
 });
@@ -151,14 +147,8 @@ test("represents a missing toxicity record as unknown", async () => {
   const response = await POST(createRequest());
   const body = await response.json();
 
-  assert.equal(
-    body.identification.topResult.toxicity.catSafety,
-    "unknown",
-  );
-  assert.equal(
-    body.identification.topResult.toxicity.dogSafety,
-    "unknown",
-  );
+  assert.equal(body.identification.topResult.toxicity.catSafety, "unknown");
+  assert.equal(body.identification.topResult.toxicity.dogSafety, "unknown");
 });
 
 test("returns a controlled API error when PlantNet fails", async () => {

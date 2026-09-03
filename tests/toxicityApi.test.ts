@@ -35,14 +35,8 @@ test("parses cat and dog toxicity and symptoms", async () => {
 
   assert.equal(result?.catSafety, "toxic");
   assert.equal(result?.dogSafety, "toxic");
-  assert.deepEqual(result?.symptoms.cats, [
-    "Oral Irritation",
-    "Drooling",
-  ]);
-  assert.deepEqual(result?.symptoms.dogs, [
-    "Oral Irritation",
-    "Drooling",
-  ]);
+  assert.deepEqual(result?.symptoms.cats, ["Oral Irritation", "Drooling"]);
+  assert.deepEqual(result?.symptoms.dogs, ["Oral Irritation", "Drooling"]);
 });
 
 test("does not infer safe for an animal missing from a toxic record", async () => {
@@ -77,9 +71,7 @@ test("falls back to the local safe-plant dataset", async () => {
 test("returns null when no toxicity or local safe record exists", async () => {
   mockPlants([]);
 
-  const result = await findPlantToxicity(
-    "Definitely not a registered plant",
-  );
+  const result = await findPlantToxicity("Definitely not a registered plant");
 
   assert.equal(result, null);
 });

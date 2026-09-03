@@ -19,6 +19,8 @@
     "src/lib/toxicityApi.ts",
     "src/types/plant.ts",
     "src/app/api/analyze/route.ts",
+    "src/app/api/identify/route.ts",
+    "src/app/api/toxicity/route.ts",
     "src/data/safePlants.json",
     "tests/**/*.ts"
   ]

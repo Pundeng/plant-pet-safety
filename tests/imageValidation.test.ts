@@ -1,22 +1,13 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {
-  MAX_FILE_SIZE,
-  validateImage,
-} from "../src/lib/imageValidation";
+import { MAX_FILE_SIZE, validateImage } from "../src/lib/imageValidation";
 
 test("accepts JPEG images", () => {
-  assert.equal(
-    validateImage({ type: "image/jpeg", size: 1024 }),
-    null,
-  );
+  assert.equal(validateImage({ type: "image/jpeg", size: 1024 }), null);
 });
 
 test("accepts PNG images", () => {
-  assert.equal(
-    validateImage({ type: "image/png", size: 1024 }),
-    null,
-  );
+  assert.equal(validateImage({ type: "image/png", size: 1024 }), null);
 });
 
 test("rejects unsupported image types", () => {
