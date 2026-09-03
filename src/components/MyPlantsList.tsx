@@ -14,7 +14,9 @@ export default function MyPlantsList() {
   };
 
   if (plants.length === 0) {
-    return <p>No saved plants yet. Analyze a plant and save it to see it here.</p>;
+    return (
+      <p>No saved plants yet. Analyze a plant and save it to see it here.</p>
+    );
   }
 
   return (
@@ -70,7 +72,11 @@ export default function MyPlantsList() {
                 <ul>
                   {plant.sources.map((source) => (
                     <li key={source.url}>
-                      <a href={source.url} target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={source.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         {source.name}
                       </a>
                     </li>

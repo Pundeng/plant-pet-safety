@@ -9,9 +9,7 @@ interface SavePlantButtonProps {
 }
 
 export default function SavePlantButton({ plant }: SavePlantButtonProps) {
-  const [saved, setSaved] = useState(() =>
-    isPlantSaved(plant.scientificName),
-  );
+  const [saved, setSaved] = useState(() => isPlantSaved(plant.scientificName));
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
