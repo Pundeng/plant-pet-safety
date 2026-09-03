@@ -1,16 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SavedPlant } from "../types/savedPlant";
 import { getSavedPlants, removeSavedPlant } from "../lib/plantStorage";
 
 export default function MyPlantsList() {
-  const [plants, setPlants] = useState<SavedPlant[]>([]);
-
-  useEffect(() => {
-    setPlants(getSavedPlants());
-  }, []);
+  const [plants, setPlants] = useState<SavedPlant[]>(() => getSavedPlants());
 
   const handleRemove = (id: string) => {
     removeSavedPlant(id);

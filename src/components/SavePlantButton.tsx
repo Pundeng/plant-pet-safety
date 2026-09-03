@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Plant } from "../types/plant";
 import { isPlantSaved, savePlant } from "../lib/plantStorage";
 
@@ -9,13 +9,11 @@ interface SavePlantButtonProps {
 }
 
 export default function SavePlantButton({ plant }: SavePlantButtonProps) {
-  const [saved, setSaved] = useState(false);
+  const [saved, setSaved] = useState(() =>
+    isPlantSaved(plant.scientificName),
+  );
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-
-  useEffect(() => {
-    setSaved(isPlantSaved(plant.scientificName));
-  }, [plant.scientificName]);
 
   const handleSave = async () => {
     if (saved || isSaving) {
