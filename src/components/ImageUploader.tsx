@@ -4,35 +4,11 @@ import Image from "next/image";
 import { ChangeEvent, useEffect, useState } from "react";
 import PlantResult from "@/components/PlantResult";
 import { Plant } from "@/types/plant";
-
-const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png"];
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
-
-interface CandidateToxicity {
-  catSafety: Plant["catSafety"];
-  dogSafety: Plant["dogSafety"];
-  symptoms?: Plant["symptoms"];
-  source?: {
-    name: string;
-    url: string;
-  };
-}
-
-interface ReferenceImage {
-  url: string;
-  author: string | null;
-  license: string | null;
-  citation: string | null;
-}
-
-interface IdentificationCandidate {
-  scientificName: string | null;
-  commonName: string | null;
-  confidence: number;
-  lowConfidence: boolean;
-  referenceImage: ReferenceImage | null;
-  toxicity: CandidateToxicity;
-}
+import { validateImage } from "@/lib/imageValidation";
+import {
+  IdentificationCandidate,
+  normalizePlant,
+} from "@/lib/plantNormalization";
 
 interface IdentificationResult {
   identified: boolean;
@@ -43,33 +19,6 @@ interface IdentificationResult {
 interface AnalyzeResponse {
   identification: IdentificationResult;
   hasSafetyConflict: boolean;
-}
-
-function normalizePlant(
-  candidate: IdentificationCandidate,
-  imageUrl: string,
-): Plant {
-  return {
-    commonName: candidate.commonName ?? "Unknown",
-    scientificName: candidate.scientificName ?? "Unknown",
-    imageUrl,
-    catSafety: candidate.toxicity.catSafety,
-    dogSafety: candidate.toxicity.dogSafety,
-    symptoms: candidate.toxicity.symptoms,
-    sources: candidate.toxicity.source ? [candidate.toxicity.source] : [],
-  };
-}
-
-function validateImage(file: File): string | null {
-  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-    return "Please upload a JPEG or PNG image.";
-  }
-
-  if (file.size > MAX_FILE_SIZE) {
-    return "This image is too large. Please upload an image under 5 MB.";
-  }
-
-  return null;
 }
 
 export default function ImageUploader() {
