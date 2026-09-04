@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { findPlantToxicity } from "@/lib/toxicityApi";
+import { findPlantToxicity } from "../../../lib/toxicityApi";
 
 export async function GET(request: NextRequest) {
   const scientificName = request.nextUrl.searchParams.get("name");
