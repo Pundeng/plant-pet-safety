@@ -1,5 +1,7 @@
 import test, { afterEach } from "node:test";
 import assert from "node:assert/strict";
+
+import { ServiceError } from "../src/lib/apiErrors";
 import { findPlantToxicity } from "../src/lib/toxicityApi";
 
 const originalFetch = global.fetch;
@@ -78,10 +80,17 @@ test("returns null when no toxicity or local safe record exists", async () => {
 
 test("throws a controlled error when Plant Smart fails", async () => {
   global.fetch = async () =>
-    new Response("service unavailable", { status: 503 });
+    new Response("service unavailable", {
+      status: 503,
+    });
 
   await assert.rejects(
-    findPlantToxicity("Monstera deliciosa"),
-    /Failed to fetch plant toxicity data/,
+    () => findPlantToxicity("Monstera deliciosa"),
+    (error: unknown) => {
+      return (
+        error instanceof ServiceError &&
+        error.code === "TOXICITY_SERVICE_FAILED"
+      );
+    },
   );
 });
