@@ -1,6 +1,7 @@
 import test, { afterEach } from "node:test";
 import assert from "node:assert/strict";
 import { NextRequest } from "next/server";
+
 import { GET } from "../src/app/api/toxicity/route";
 
 const originalFetch = global.fetch;
@@ -24,7 +25,8 @@ test("returns 400 when plant name is missing", async () => {
   const body = await response.json();
 
   assert.equal(response.status, 400);
-  assert.equal(body.error, "Missing plant name");
+  assert.equal(body.error.code, "INVALID_REQUEST");
+  assert.equal(body.error.message, "A plant name is required.");
 });
 
 test("returns toxicity data for a known toxic plant", async () => {
@@ -63,18 +65,13 @@ test("returns toxicity data for a known toxic plant", async () => {
     );
 
   const response = await GET(createRequest("Monstera deliciosa"));
-
   const body = await response.json();
 
   assert.equal(response.status, 200);
-
   assert.equal(body.catSafety, "toxic");
   assert.equal(body.dogSafety, "toxic");
-
   assert.deepEqual(body.symptoms.cats, ["Drooling", "Vomiting"]);
-
   assert.deepEqual(body.symptoms.dogs, ["Drooling", "Vomiting"]);
-
   assert.equal(body.source.name, "Plant Smart");
 });
 
@@ -88,7 +85,6 @@ test("returns null when no toxicity record exists", async () => {
     });
 
   const response = await GET(createRequest("Unregistered plant species"));
-
   const body = await response.json();
 
   assert.equal(response.status, 200);
@@ -105,15 +101,30 @@ test("returns local safe fallback when plant exists in safe dataset", async () =
     });
 
   const response = await GET(createRequest("Nephrolepis exaltata"));
-
   const body = await response.json();
 
   assert.equal(response.status, 200);
   assert.equal(body.catSafety, "safe");
   assert.equal(body.dogSafety, "safe");
-
   assert.deepEqual(body.symptoms, {
     cats: [],
     dogs: [],
   });
+});
+
+test("returns 502 when toxicity service fails", async () => {
+  global.fetch = async () =>
+    new Response("service unavailable", {
+      status: 503,
+    });
+
+  const response = await GET(createRequest("Monstera deliciosa"));
+  const body = await response.json();
+
+  assert.equal(response.status, 502);
+  assert.equal(body.error.code, "TOXICITY_SERVICE_FAILED");
+  assert.equal(
+    body.error.message,
+    "Toxicity information is temporarily unavailable.",
+  );
 });

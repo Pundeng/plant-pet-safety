@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+
+import { createApiError, ServiceError } from "../../../lib/apiErrors";
 import { identifyPlant } from "../../../lib/plantIdentification";
 
 export async function POST(request: Request) {
@@ -8,8 +10,10 @@ export async function POST(request: Request) {
 
     if (!(image instanceof File)) {
       return NextResponse.json(
-        { error: "No image was uploaded" },
-        { status: 400 },
+        createApiError("INVALID_REQUEST", "No image was uploaded."),
+        {
+          status: 400,
+        },
       );
     }
 
@@ -18,40 +22,71 @@ export async function POST(request: Request) {
     if (!result.identified) {
       return NextResponse.json({
         identified: false,
-        message: "No plant could be identified",
+        message: "No plant could be identified.",
       });
     }
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error("Plant identification error:", error);
+    console.error("[identify-route] Identification failed", error);
 
-    if (error instanceof Error) {
-      if (error.message === "UNSUPPORTED_IMAGE_TYPE") {
-        return NextResponse.json(
-          { error: "Only JPEG and PNG images are supported" },
-          { status: 400 },
-        );
-      }
+    if (error instanceof ServiceError) {
+      switch (error.code) {
+        case "UNSUPPORTED_IMAGE_TYPE":
+          return NextResponse.json(
+            createApiError(
+              error.code,
+              "Only JPEG and PNG images are supported.",
+            ),
+            {
+              status: 400,
+            },
+          );
 
-      if (error.message === "PLANTNET_API_KEY_MISSING") {
-        return NextResponse.json(
-          { error: "PlantNet API key is not configured" },
-          { status: 500 },
-        );
-      }
+        case "IDENTIFICATION_NOT_CONFIGURED":
+          return NextResponse.json(
+            createApiError(
+              error.code,
+              "Plant identification service is not configured.",
+            ),
+            {
+              status: 500,
+            },
+          );
 
-      if (error.message === "PLANTNET_API_FAILED") {
-        return NextResponse.json(
-          { error: "Plant identification failed" },
-          { status: 502 },
-        );
+        case "IDENTIFICATION_SERVICE_TIMEOUT":
+          return NextResponse.json(
+            createApiError(
+              error.code,
+              "Plant identification service timed out. Please try again.",
+            ),
+            {
+              status: 504,
+            },
+          );
+
+        case "IDENTIFICATION_SERVICE_FAILED":
+        case "IDENTIFICATION_RESPONSE_INVALID":
+          return NextResponse.json(
+            createApiError(
+              error.code,
+              "Plant identification is temporarily unavailable.",
+            ),
+            {
+              status: 502,
+            },
+          );
       }
     }
 
     return NextResponse.json(
-      { error: "An unexpected error occurred" },
-      { status: 500 },
+      createApiError(
+        "INTERNAL_ERROR",
+        "Plant identification could not be completed.",
+      ),
+      {
+        status: 500,
+      },
     );
   }
 }

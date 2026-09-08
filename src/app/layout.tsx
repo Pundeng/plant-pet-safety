@@ -15,7 +15,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Plant Pet Safety",
-  description: "Identify plants and check pet-safety information for cats and dogs.",
+  description:
+    "Identify plants and check pet-safety information for cats and dogs.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -51,7 +52,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </header>
         {children}
         <footer className="mx-auto w-full max-w-5xl px-5 py-10 text-center text-xs text-slate-500 sm:px-8">
-          Plant identification can be uncertain. Confirm a plant before relying on safety information.
+          Plant identification can be uncertain. Confirm a plant before relying
+          on safety information.
         </footer>
       </body>
     </html>

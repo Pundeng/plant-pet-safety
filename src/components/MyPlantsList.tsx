@@ -22,9 +22,12 @@ export default function MyPlantsList() {
   if (plants.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center">
-        <h2 className="text-lg font-semibold text-slate-900">No saved plants yet</h2>
+        <h2 className="text-lg font-semibold text-slate-900">
+          No saved plants yet
+        </h2>
         <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
-          Analyze a plant from the home page and save the result to build your personal list.
+          Analyze a plant from the home page and save the result to build your
+          personal list.
         </p>
       </div>
     );
@@ -49,14 +52,22 @@ export default function MyPlantsList() {
           )}
 
           <div className="p-5">
-            <h2 className="text-lg font-semibold text-slate-950">{plant.commonName}</h2>
-            <p className="mt-1 text-sm italic text-slate-500">{plant.scientificName}</p>
+            <h2 className="text-lg font-semibold text-slate-950">
+              {plant.commonName}
+            </h2>
+            <p className="mt-1 text-sm italic text-slate-500">
+              {plant.scientificName}
+            </p>
 
             <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold">
-              <span className={`rounded-full px-3 py-1.5 capitalize ${safetyClasses[plant.catSafety]}`}>
+              <span
+                className={`rounded-full px-3 py-1.5 capitalize ${safetyClasses[plant.catSafety]}`}
+              >
                 Cat: {plant.catSafety}
               </span>
-              <span className={`rounded-full px-3 py-1.5 capitalize ${safetyClasses[plant.dogSafety]}`}>
+              <span
+                className={`rounded-full px-3 py-1.5 capitalize ${safetyClasses[plant.dogSafety]}`}
+              >
                 Dog: {plant.dogSafety}
               </span>
             </div>
@@ -73,7 +84,9 @@ export default function MyPlantsList() {
               <div className="mt-3 space-y-4 text-sm leading-6 text-slate-600">
                 {plant.symptoms?.cats && plant.symptoms.cats.length > 0 && (
                   <div>
-                    <h3 className="font-semibold text-slate-800">Cat symptoms</h3>
+                    <h3 className="font-semibold text-slate-800">
+                      Cat symptoms
+                    </h3>
                     <ul className="mt-1 list-disc pl-5">
                       {plant.symptoms.cats.map((symptom) => (
                         <li key={symptom}>{symptom}</li>
@@ -84,7 +97,9 @@ export default function MyPlantsList() {
 
                 {plant.symptoms?.dogs && plant.symptoms.dogs.length > 0 && (
                   <div>
-                    <h3 className="font-semibold text-slate-800">Dog symptoms</h3>
+                    <h3 className="font-semibold text-slate-800">
+                      Dog symptoms
+                    </h3>
                     <ul className="mt-1 list-disc pl-5">
                       {plant.symptoms.dogs.map((symptom) => (
                         <li key={symptom}>{symptom}</li>

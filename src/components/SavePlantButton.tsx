@@ -47,7 +47,11 @@ export default function SavePlantButton({ plant }: SavePlantButtonProps) {
         disabled={saved || isSaving}
         className="rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-slate-300"
       >
-        {isSaving ? "Saving..." : saved ? "Saved to My Plants" : "Save to My Plants"}
+        {isSaving
+          ? "Saving..."
+          : saved
+            ? "Saved to My Plants"
+            : "Save to My Plants"}
       </button>
 
       {message && <p className="mt-2 text-sm text-slate-600">{message}</p>}
