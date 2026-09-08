@@ -1,0 +1,84 @@
+{
+  "plants": [
+    {
+      "scientificName": "Chlorophytum comosum",
+      "commonNames": ["Spider plant", "Ribbon plant", "Airplane plant"]
+    },
+    {
+      "scientificName": "Monstera deliciosa",
+      "commonNames": ["Swiss cheese plant", "Split-leaf philodendron"]
+    },
+    {
+      "scientificName": "Aloe vera",
+      "commonNames": ["Aloe", "Aloe vera"]
+    },
+    {
+      "scientificName": "Epipremnum aureum",
+      "commonNames": ["Golden pothos", "Pothos", "Devil's ivy"]
+    },
+    {
+      "scientificName": "Spathiphyllum wallisii",
+      "commonNames": ["Peace lily"]
+    },
+    {
+      "scientificName": "Dracaena trifasciata",
+      "commonNames": ["Snake plant", "Mother-in-law's tongue"]
+    },
+    {
+      "scientificName": "Ficus lyrata",
+      "commonNames": ["Fiddle-leaf fig", "Fiddle leaf fig"]
+    },
+    {
+      "scientificName": "Ficus elastica",
+      "commonNames": ["Rubber plant", "Rubber tree"]
+    },
+    {
+      "scientificName": "Nephrolepis exaltata",
+      "commonNames": ["Boston fern", "Sword fern"]
+    },
+    {
+      "scientificName": "Dypsis lutescens",
+      "commonNames": ["Areca palm", "Butterfly palm"]
+    },
+    {
+      "scientificName": "Calathea orbifolia",
+      "commonNames": ["Prayer plant", "Round-leaf calathea"]
+    },
+    {
+      "scientificName": "Maranta leuconeura",
+      "commonNames": ["Prayer plant"]
+    },
+    {
+      "scientificName": "Hedera helix",
+      "commonNames": ["English ivy", "Common ivy"]
+    },
+    {
+      "scientificName": "Philodendron hederaceum",
+      "commonNames": ["Heartleaf philodendron", "Heart-leaf philodendron"]
+    },
+    {
+      "scientificName": "Zamioculcas zamiifolia",
+      "commonNames": ["ZZ plant", "Zanzibar gem"]
+    },
+    {
+      "scientificName": "Schefflera arboricola",
+      "commonNames": ["Dwarf umbrella tree", "Umbrella plant"]
+    },
+    {
+      "scientificName": "Crassula ovata",
+      "commonNames": ["Jade plant"]
+    },
+    {
+      "scientificName": "Lilium longiflorum",
+      "commonNames": ["Easter lily"]
+    },
+    {
+      "scientificName": "Lilium candidum",
+      "commonNames": ["Madonna lily"]
+    },
+    {
+      "scientificName": "Lilium bulbiferum",
+      "commonNames": ["Orange lily"]
+    }
+  ]
+}
