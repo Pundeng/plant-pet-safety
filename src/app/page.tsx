@@ -13,8 +13,8 @@ export default function Home() {
           </h1>
 
           <p className="mx-auto mt-3 max-w-xl text-base leading-7 text-zinc-600">
-            Search for a plant by name or upload a photo to check available
-            pet-safety information.
+            Upload a photo to identify a plant and check available pet-safety
+            information.
           </p>
 
           <Link
@@ -24,14 +24,6 @@ export default function Home() {
             View My Plants
           </Link>
         </header>
-
-        <PlantNameSearch />
-
-        <div className="my-8 flex items-center gap-4" aria-hidden="true">
-          <div className="h-px flex-1 bg-zinc-200" />
-          <span className="text-sm font-medium text-zinc-400">or</span>
-          <div className="h-px flex-1 bg-zinc-200" />
-        </div>
 
         <ImageUploader />
       </div>
