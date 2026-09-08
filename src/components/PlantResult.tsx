@@ -6,6 +6,12 @@ interface PlantResultProps {
   lowConfidence?: boolean;
 }
 
+const safetyClasses = {
+  safe: "border-emerald-200 bg-emerald-50 text-emerald-900",
+  toxic: "border-red-200 bg-red-50 text-red-900",
+  unknown: "border-slate-200 bg-slate-50 text-slate-700",
+};
+
 export default function PlantResult({
   plant,
   lowConfidence = false,

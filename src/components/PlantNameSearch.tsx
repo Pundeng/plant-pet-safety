@@ -89,9 +89,7 @@ export default function PlantNameSearch() {
       );
 
       const data = (await response.json()) as
-        | ToxicityResponse
-        | ApiErrorResponse
-        | null;
+        ToxicityResponse | ApiErrorResponse | null;
 
       if (!response.ok) {
         const errorResponse = data as ApiErrorResponse;
