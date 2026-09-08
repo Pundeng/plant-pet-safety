@@ -1,5 +1,7 @@
 import Link from "next/link";
+
 import ImageUploader from "@/components/ImageUploader";
+import PlantNameSearch from "@/components/PlantNameSearch";
 
 export default function Home() {
   return (
