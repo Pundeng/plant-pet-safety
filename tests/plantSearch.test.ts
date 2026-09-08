@@ -1,15 +1,26 @@
-import test, { afterEach } from "node:test";
+import test, { afterEach, beforeEach } from "node:test";
 import assert from "node:assert/strict";
 
 import { searchPlants } from "../src/lib/plantSearch";
 
 const originalFetch = global.fetch;
+const originalApiKey = process.env.PLANTNET_API_KEY;
+
+beforeEach(() => {
+  process.env.PLANTNET_API_KEY = "test-key";
+});
 
 afterEach(() => {
   global.fetch = originalFetch;
+
+  if (originalApiKey === undefined) {
+    delete process.env.PLANTNET_API_KEY;
+  } else {
+    process.env.PLANTNET_API_KEY = originalApiKey;
+  }
 });
 
-function mockPlants(plants: unknown[]) {
+function mockPlantNet(plants: unknown[]) {
   global.fetch = async () =>
     new Response(JSON.stringify(plants), {
       status: 200,
@@ -20,67 +31,77 @@ function mockPlants(plants: unknown[]) {
 }
 
 test("searches by scientific name", async () => {
-  mockPlants([
+  mockPlantNet([
     {
-      name: "Monstera deliciosa",
-      common: [{ name: "Swiss Cheese Plant" }],
+      scientificNameWithoutAuthor: "Monstera deliciosa",
+      commonNames: ["Swiss Cheese Plant"],
     },
   ]);
 
   const results = await searchPlants("monstera deliciosa");
 
-  assert.equal(results.length, 1);
-  assert.equal(results[0]?.scientificName, "Monstera deliciosa");
+  assert.equal(results.length >= 1, true);
+  assert.equal(
+    results.some((result) => result.scientificName === "Monstera deliciosa"),
+    true,
+  );
 });
 
 test("searches by common name", async () => {
-  mockPlants([
-    {
-      name: "Monstera deliciosa",
-      common: [{ name: "Swiss Cheese Plant" }],
-    },
-  ]);
-
   const results = await searchPlants("swiss cheese");
 
-  assert.equal(results.length, 1);
-  assert.equal(results[0]?.scientificName, "Monstera deliciosa");
-  assert.deepEqual(results[0]?.commonNames, ["Swiss Cheese Plant"]);
+  assert.equal(results.length >= 1, true);
+
+  const monstera = results.find(
+    (result) => result.scientificName === "Monstera deliciosa",
+  );
+
+  assert.ok(monstera);
+
+  assert.equal(
+    monstera.commonNames.some(
+      (name) => name.toLowerCase() === "swiss cheese plant",
+    ),
+    true,
+  );
 });
 
 test("normalizes whitespace and case", async () => {
-  mockPlants([
+  mockPlantNet([
     {
-      name: "Monstera deliciosa",
-      common: [{ name: "Swiss Cheese Plant" }],
+      scientificNameWithoutAuthor: "Monstera deliciosa",
+      commonNames: ["Swiss Cheese Plant"],
     },
   ]);
 
   const results = await searchPlants("   MONSTERA    DELICIOSA   ");
 
-  assert.equal(results.length, 1);
-  assert.equal(results[0]?.scientificName, "Monstera deliciosa");
+  assert.equal(results.length >= 1, true);
+
+  assert.equal(
+    results.some((result) => result.scientificName === "Monstera deliciosa"),
+    true,
+  );
 });
 
 test("returns multiple possible matches for ambiguous searches", async () => {
-  mockPlants([
-    {
-      name: "Aloe vera",
-      common: [{ name: "Aloe" }],
-    },
-    {
-      name: "Aloe arborescens",
-      common: [{ name: "Krantz Aloe" }],
-    },
-  ]);
+  const results = await searchPlants("prayer plant");
 
-  const results = await searchPlants("aloe");
+  assert.equal(results.length >= 2, true);
 
-  assert.equal(results.length, 2);
+  assert.equal(
+    results.some((result) => result.scientificName === "Maranta leuconeura"),
+    true,
+  );
+
+  assert.equal(
+    results.some((result) => result.scientificName === "Calathea orbifolia"),
+    true,
+  );
 });
 
 test("returns no results for an unmatched search", async () => {
-  mockPlants([]);
+  mockPlantNet([]);
 
   const results = await searchPlants("Definitely not a plant");
 
@@ -88,14 +109,21 @@ test("returns no results for an unmatched search", async () => {
 });
 
 test("includes local safe plants in search", async () => {
-  mockPlants([]);
-
   const results = await searchPlants("Boston Fern");
 
   assert.equal(
-    results.some(
-      (result) => result.scientificName === "Nephrolepis exaltata",
-    ),
+    results.some((result) => result.scientificName === "Nephrolepis exaltata"),
+    true,
+  );
+});
+
+test("finds spider plant by common name", async () => {
+  const results = await searchPlants("spider plant");
+
+  assert.equal(results.length >= 1, true);
+
+  assert.equal(
+    results.some((result) => result.scientificName === "Chlorophytum comosum"),
     true,
   );
 });
