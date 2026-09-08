@@ -1,5 +1,7 @@
 import test, { afterEach, beforeEach } from "node:test";
 import assert from "node:assert/strict";
+
+import { ServiceError } from "../src/lib/apiErrors";
 import { identifyPlant } from "../src/lib/plantIdentification";
 
 const originalFetch = global.fetch;
@@ -117,14 +119,19 @@ test("returns a controlled no-result response", async () => {
 
 test("rejects unsupported image types before calling PlantNet", async () => {
   let fetchCalled = false;
+
   global.fetch = async () => {
     fetchCalled = true;
     return new Response();
   };
 
   await assert.rejects(
-    identifyPlant(createImage("image/webp")),
-    /UNSUPPORTED_IMAGE_TYPE/,
+    () => identifyPlant(createImage("image/webp")),
+    (error: unknown) => {
+      return (
+        error instanceof ServiceError && error.code === "UNSUPPORTED_IMAGE_TYPE"
+      );
+    },
   );
 
   assert.equal(fetchCalled, false);
@@ -134,13 +141,26 @@ test("fails clearly when the API key is missing", async () => {
   delete process.env.PLANTNET_API_KEY;
 
   await assert.rejects(
-    identifyPlant(createImage()),
-    /PLANTNET_API_KEY_MISSING/,
+    () => identifyPlant(createImage()),
+    (error: unknown) => {
+      return (
+        error instanceof ServiceError &&
+        error.code === "IDENTIFICATION_NOT_CONFIGURED"
+      );
+    },
   );
 });
 
 test("converts a failed PlantNet response into a controlled error", async () => {
   mockPlantNetResponse({ error: "upstream failure" }, 503);
 
-  await assert.rejects(identifyPlant(createImage()), /PLANTNET_API_FAILED/);
+  await assert.rejects(
+    () => identifyPlant(createImage()),
+    (error: unknown) => {
+      return (
+        error instanceof ServiceError &&
+        error.code === "IDENTIFICATION_SERVICE_FAILED"
+      );
+    },
+  );
 });
