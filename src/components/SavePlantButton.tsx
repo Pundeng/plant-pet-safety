@@ -41,11 +41,24 @@ export default function SavePlantButton({ plant }: SavePlantButtonProps) {
 
   return (
     <div>
-      <button type="button" onClick={handleSave} disabled={saved || isSaving}>
-        {isSaving ? "Saving..." : saved ? "Saved" : "Save Plant"}
+      <button
+        type="button"
+        onClick={handleSave}
+        disabled={saved || isSaving}
+        className="inline-flex min-h-11 items-center justify-center rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:bg-slate-300"
+      >
+        {isSaving
+          ? "Saving..."
+          : saved
+            ? "Saved to My Plants"
+            : "Save to My Plants"}
       </button>
 
-      {message && <p>{message}</p>}
+      {message && (
+        <p className="mt-2 text-sm text-slate-600" role="status">
+          {message}
+        </p>
+      )}
     </div>
   );
 }
