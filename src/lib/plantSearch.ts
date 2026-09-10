@@ -1,3 +1,4 @@
+
 import plantAliasesData from "../data/plantAliases.json";
 
 import { ServiceError } from "./apiErrors";
@@ -288,7 +289,9 @@ export async function searchPlants(
       result.commonNames.some((name) => normalizePlantSearch(name) === query),
   );
 
-  if (hasExactLocalMatch) {
+  
+  // Exact curated aliases need no external dependency; partial matches still
+  // query Pl@ntNet so ambiguous names can return additional candidates.if (hasExactLocalMatch) {
     return combineResults(localResults, [], query);
   }
 
@@ -297,7 +300,9 @@ export async function searchPlants(
   try {
     plantNetResults = await searchPlantNet(cleanedInput);
   } catch (error) {
-    if (localResults.length > 0) {
+    
+    // Degrade to known local matches, but surface the outage when returning an
+    // empty list would be indistinguishable from a genuine no-results search.if (localResults.length > 0) {
       console.error(
         "[plant-search] Pl@ntNet search failed; returning local matches",
         error,

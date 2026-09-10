@@ -1,3 +1,4 @@
+
 import { LOW_CONFIDENCE_THRESHOLD } from "./constants";
 import { ServiceError } from "./apiErrors";
 import { fetchWithTimeout, RequestTimeoutError } from "./fetchWithTimeout";
@@ -69,7 +70,8 @@ function getCommonName(species: unknown): string | null {
 
 function getConfidence(score: unknown): number {
   if (typeof score !== "number" || !Number.isFinite(score)) {
-    return 0;
+    
+    // Missing upstream confidence should trigger uncertainty, not suppress it.return 0;
   }
 
   return Math.max(0, Math.min(1, score));

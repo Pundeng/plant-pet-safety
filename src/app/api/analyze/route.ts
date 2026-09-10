@@ -1,3 +1,4 @@
+
 import { NextResponse } from "next/server";
 
 import { createApiError, ServiceError } from "../../../lib/apiErrors";
@@ -37,7 +38,9 @@ export async function POST(request: Request) {
       ...identification.alternatives,
     ];
 
-    const enrichedCandidates = await Promise.all(
+    
+    // Isolate enrichment per candidate so a safety-service failure does not
+    // discard otherwise useful identification results or alternatives.const enrichedCandidates = await Promise.all(
       allCandidates.map(async (candidate) => {
         if (!candidate.scientificName?.trim()) {
           return {

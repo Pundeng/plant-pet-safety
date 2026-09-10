@@ -1,3 +1,4 @@
+
 import { Plant } from "../types/plant";
 import { SavedPlant } from "../types/savedPlant";
 
@@ -22,6 +23,7 @@ function readStoredPlants(): SavedPlant[] {
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? (parsed as SavedPlant[]) : [];
   } catch {
+    // Corrupt or stale browser data should not make the saved-plants UI unusable.
     return [];
   }
 }
@@ -80,7 +82,9 @@ export async function savePlant(plant: Plant): Promise<SavedPlant | null> {
     return null;
   }
 
-  const persistentImageUrl = plant.imageUrl
+  
+  // Preview object URLs are temporary; persist a bounded thumbnail instead.
+  // Thumbnail failure is non-fatal so the safety record can still be saved.const persistentImageUrl = plant.imageUrl
     ? await createThumbnail(plant.imageUrl)
     : "";
 
