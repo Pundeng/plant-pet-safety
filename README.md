@@ -24,12 +24,13 @@ Pet owners may not know which plants are safe around their animals. Plant Pet Sa
 
 ```mermaid
 flowchart LR
-    A[Upload JPEG/PNG] --> B[Validate image]
-    B --> C[Pl@ntNet: top match + alternatives]
-    C --> D[Toxicity lookup by scientific name]
-    D --> E[Local safe fallback if no record]
-    E --> F[Normalized result + safety warnings]
+    A["Upload JPEG/PNG"] --> B["Validate image"]
+    B --> C["Pl@ntNet: top match + alternatives"]
+    C --> D["Toxicity lookup by scientific name"]
+    D --> E["Local safe fallback if no record"]
+    E --> F["Normalized result + safety warnings"]
 ```
+
 
 The photo pipeline checks up to three candidates. If toxicity lookup fails, identification is preserved with an `unknown` safety result and service-status information.
 
@@ -37,14 +38,14 @@ The photo pipeline checks up to three candidates. If toxicity lookup fails, iden
 
 ```mermaid
 flowchart LR
-    A[Enter plant name] --> B[Local aliases]
-    B --> C{Exact match?}
-    C -- Yes --> D[Rank results]
-    C -- No --> E[Pl@ntNet search]
-    E --> F[Merge and rank]
-    F --> G[Select species]
+    A["Enter plant name"] --> B["Local aliases"]
+    B --> C{"Exact match?"}
+    C -- Yes --> D["Rank results"]
+    C -- No --> E["Pl@ntNet search"]
+    E --> F["Merge and rank"]
+    F --> G["Select species"]
     D --> G
-    G --> H[Toxicity lookup + pet-safety result]
+    G --> H["Toxicity lookup + pet-safety result"]
 ```
 
 Next.js API routes handle both flows, with reusable identification, search, and toxicity logic in `src/lib`.
