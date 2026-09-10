@@ -37,6 +37,8 @@ export async function POST(request: Request) {
       ...identification.alternatives,
     ];
 
+    // Handle each candidate separately so one safety check failure
+    // does not remove the other identification results.
     const enrichedCandidates = await Promise.all(
       allCandidates.map(async (candidate) => {
         if (!candidate.scientificName?.trim()) {
@@ -111,10 +113,15 @@ export async function POST(request: Request) {
     const alternatives = enrichedCandidates.slice(1);
 
     const safetyProfiles = new Set(
-      enrichedCandidates.map(
-        (candidate) =>
-          `${candidate.toxicity.catSafety}-${candidate.toxicity.dogSafety}`,
-      ),
+      enrichedCandidates.map((candidate) => {
+        const toxicity = candidate.toxicity;
+        const catSafety =
+          "catSafety" in toxicity ? toxicity.catSafety : "unknown";
+        const dogSafety =
+          "dogSafety" in toxicity ? toxicity.dogSafety : "unknown";
+
+        return `${catSafety}-${dogSafety}`;
+      }),
     );
 
     return NextResponse.json({

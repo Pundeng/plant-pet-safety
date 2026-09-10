@@ -288,6 +288,8 @@ export async function searchPlants(
       result.commonNames.some((name) => normalizePlantSearch(name) === query),
   );
 
+  // Use an exact local match right away.
+  // For partial matches, also check Pl@ntNet for more possible results.
   if (hasExactLocalMatch) {
     return combineResults(localResults, [], query);
   }
@@ -297,6 +299,8 @@ export async function searchPlants(
   try {
     plantNetResults = await searchPlantNet(cleanedInput);
   } catch (error) {
+    // If Pl@ntNet fails, use local matches if we have them.
+    // If we have no local results, show the error instead of returning an empty list.
     if (localResults.length > 0) {
       console.error(
         "[plant-search] Pl@ntNet search failed; returning local matches",

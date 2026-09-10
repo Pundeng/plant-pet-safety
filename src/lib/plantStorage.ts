@@ -22,6 +22,7 @@ function readStoredPlants(): SavedPlant[] {
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? (parsed as SavedPlant[]) : [];
   } catch {
+    // Ignore broken saved data so the saved-plants page still works.
     return [];
   }
 }
@@ -80,6 +81,8 @@ export async function savePlant(plant: Plant): Promise<SavedPlant | null> {
     return null;
   }
 
+  // Preview image URLs are temporary, so save a small thumbnail instead.
+  // If thumbnail creation fails, still save the plant safety result.
   const persistentImageUrl = plant.imageUrl
     ? await createThumbnail(plant.imageUrl)
     : "";

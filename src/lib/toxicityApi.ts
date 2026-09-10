@@ -129,6 +129,8 @@ export async function findPlantToxicity(scientificName: string) {
   );
 
   if (!plant) {
+    // Only use the local safe list after a successful toxicity lookup.
+    // If the toxicity service fails, do not assume the plant is safe.
     return findLocalSafePlant(scientificName);
   }
 
@@ -138,6 +140,8 @@ export async function findPlantToxicity(scientificName: string) {
   const symptoms = plant.symptoms.map((symptom) => symptom.name);
 
   return {
+    // If a plant is not listed as toxic for an animal,
+    // that does not mean it is safe for that animal.
     catSafety: catIsToxic ? ("toxic" as const) : ("unknown" as const),
     dogSafety: dogIsToxic ? ("toxic" as const) : ("unknown" as const),
 

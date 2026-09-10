@@ -69,6 +69,7 @@ function getCommonName(species: unknown): string | null {
 
 function getConfidence(score: unknown): number {
   if (typeof score !== "number" || !Number.isFinite(score)) {
+    // If confidence is missing, treat the result as uncertain.
     return 0;
   }
 
