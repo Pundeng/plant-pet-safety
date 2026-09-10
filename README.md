@@ -31,7 +31,6 @@ flowchart LR
     E --> F["Normalized result + safety warnings"]
 ```
 
-
 The photo pipeline checks up to three candidates. If toxicity lookup fails, identification is preserved with an `unknown` safety result and service-status information.
 
 ### Name search

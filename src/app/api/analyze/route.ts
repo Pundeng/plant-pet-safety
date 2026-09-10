@@ -1,4 +1,3 @@
-
 import { NextResponse } from "next/server";
 
 import { createApiError, ServiceError } from "../../../lib/apiErrors";
@@ -38,9 +37,9 @@ export async function POST(request: Request) {
       ...identification.alternatives,
     ];
 
-    
-    // Isolate enrichment per candidate so a safety-service failure does not
-    // discard otherwise useful identification results or alternatives.const enrichedCandidates = await Promise.all(
+    // Handle each candidate separately so one safety check failure
+    // does not remove the other identification results.
+    const enrichedCandidates = await Promise.all(
       allCandidates.map(async (candidate) => {
         if (!candidate.scientificName?.trim()) {
           return {
@@ -114,10 +113,15 @@ export async function POST(request: Request) {
     const alternatives = enrichedCandidates.slice(1);
 
     const safetyProfiles = new Set(
-      enrichedCandidates.map(
-        (candidate) =>
-          `${candidate.toxicity.catSafety}-${candidate.toxicity.dogSafety}`,
-      ),
+      enrichedCandidates.map((candidate) => {
+        const toxicity = candidate.toxicity;
+        const catSafety =
+          "catSafety" in toxicity ? toxicity.catSafety : "unknown";
+        const dogSafety =
+          "dogSafety" in toxicity ? toxicity.dogSafety : "unknown";
+
+        return `${catSafety}-${dogSafety}`;
+      }),
     );
 
     return NextResponse.json({

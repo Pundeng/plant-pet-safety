@@ -129,9 +129,9 @@ export async function findPlantToxicity(scientificName: string) {
   );
 
   if (!plant) {
-    
-    // Only a successful upstream lookup may fall back to known-safe data;
-    // service failures must never be mistaken for evidence of safety.return findLocalSafePlant(scientificName);
+    // Only use the local safe list after a successful toxicity lookup.
+    // If the toxicity service fails, do not assume the plant is safe.
+    return findLocalSafePlant(scientificName);
   }
 
   const catIsToxic = plant.animals.includes("cats");
@@ -140,8 +140,9 @@ export async function findPlantToxicity(scientificName: string) {
   const symptoms = plant.symptoms.map((symptom) => symptom.name);
 
   return {
-    
-    // Omission from a toxic record is not proof that an animal is safe.catSafety: catIsToxic ? ("toxic" as const) : ("unknown" as const),
+    // If a plant is not listed as toxic for an animal,
+    // that does not mean it is safe for that animal.
+    catSafety: catIsToxic ? ("toxic" as const) : ("unknown" as const),
     dogSafety: dogIsToxic ? ("toxic" as const) : ("unknown" as const),
 
     symptoms: {
