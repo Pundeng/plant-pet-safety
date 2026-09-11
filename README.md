@@ -4,11 +4,14 @@ Identify a plant from a photo or search its name to check available safety infor
 
 Built for **AnimalHack 2026** by [Pundeng](https://github.com/Pundeng) and [cho-hazel](https://github.com/cho-hazel).
 
-<!-- TODO before submission: add a live demo link and a short screenshot/GIF here. -->
+![Plant Pet Safety](docs/images/home.png)
+
+[▶ Watch the Demo Video](https://drive.google.com/file/d/1N6EW_jPr57tknusBznp2FnrqTOs2mViR/view?usp=sharing)
 
 ## About the Project
 
 Pet owners may not know which plants are safe around their animals. Plant Pet Safety brings identification and toxicity data into one interface, making uncertainty visible instead of giving false reassurance.
+
 
 ## Key Features
 
@@ -87,6 +90,20 @@ Run `npm run dev`, then open [localhost:3000](http://localhost:3000). For a prod
 Run `npm test` for validation, identification, search, toxicity, normalization, and API-route tests, including external-service failures. Use `npm run test:coverage` for coverage.
 
 Pull requests to `main` run lint, formatting checks, tests, and a production build after `npm ci`. Locally, use `npm run lint` and `npm run format:check`; `npm run format` applies formatting.
+
+## Screenshots
+
+### Plant safety result
+
+![Plant safety result](docs/images/result.png)
+
+### Plant name search
+
+![Plant name search](docs/images/search.png)
+
+### My Plants
+
+![Saved plants](docs/images/my_plants.png)
 
 ## Known Limitations
 
