@@ -12,7 +12,6 @@ Built for **AnimalHack 2026** by [Pundeng](https://github.com/Pundeng) and [cho-
 
 Pet owners may not know which plants are safe around their animals. Plant Pet Safety brings identification and toxicity data into one interface, making uncertainty visible instead of giving false reassurance.
 
-
 ## Key Features
 
 - **Photo identification and name search** using common or scientific names.
